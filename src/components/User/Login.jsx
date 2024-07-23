@@ -22,6 +22,7 @@ const Login = () => {
         setIsOtpSent(true);
         setMessage(response.data.msg);
         setMessageType('success');
+        
       } else {
         setMessage(response.data.msg || 'Failed to send OTP');
         setMessageType('error');

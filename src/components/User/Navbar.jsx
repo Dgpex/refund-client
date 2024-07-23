@@ -6,7 +6,7 @@ import { MdOutlineLocalPhone } from "react-icons/md";
 import { RiHome3Line } from "react-icons/ri";
 import { clearToken } from '../../authSlice'; // Import the clearToken action
 
-function Navbar() {
+function Navbar({showForm}) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -53,6 +53,7 @@ function Navbar() {
             isMenuOpen ? "block" : "hidden"
           } lg:block`}
         >
+          {showForm &&
           <li>
             <Link
               to="/claims"
@@ -62,7 +63,7 @@ function Navbar() {
               <span className="absolute right-0 flex items-center justify-start w-5 h-5 duration-300 transform translate-x-full group-hover:translate-x-0 ease"></span>
               <span className="relative">Claims</span>
             </Link>
-          </li>
+          </li>}
           <li>
             <Link
               to="/track"

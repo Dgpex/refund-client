@@ -1,9 +1,14 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { TbLogout } from "react-icons/tb";
 
 const AdminSidebar = () => {
-  const [isOpen, setIsOpen] = useState(false);
+  // const location = useLocation();
+  const [activeLink, setActiveLink] = useState("/admin/");
+
+  const handleSetActiveLink = (index) => {
+    setActiveLink(index);
+  };
 
   return (
     <div>
@@ -12,86 +17,42 @@ const AdminSidebar = () => {
           Darwesh Group
         </p>
       </div> */}
-      <div className="max-w-2xl mt-2 ">
+      <div className="max-w-2xl mt-2">
         <aside className="w-64" aria-label="Sidebar">
           <div className="px-3 py-4 overflow-y-auto rounded bg-gray-50 font-bold">
             <ul className="space-y-2">
               <li>
                 <Link
                   to="/admin/"
-                  className="flex items-center py-2 px-3 rounded hover:bg-emerald-500 hover:text-white transition duration-200  bg-emerald-400"
+                  className={`flex items-center py-2 px-3 rounded hover:bg-emerald-500 hover:text-white transition duration-200 ${activeLink === "/admin/" ? "bg-emerald-400 text-white" : ""}`}
+                  onClick={() => handleSetActiveLink("/admin/")}
                 >
                   Admin Dashbord
                 </Link>
               </li>
               <li>
                 <Link
-                  to="/admin/token"
-                  className="flex items-center py-2 px-3 rounded hover:bg-emerald-500 hover:text-white transition duration-200 "
-                >
-                 Token Generator
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="/"
-                  className="flex items-center py-2 px-3 rounded hover:bg-emerald-500 hover:text-white transition duration-200"
-                >
-                  All Applications
-                </Link>
-              </li>
-              {/* <li>
-              <Link
-                to="/"
-                className="flex items-center py-2 px-3 rounded hover:bg-gray-500 hover:text-white transition duration-200"
-              >
-                Verified-yes
-              </Link>
-            </li>
-            <li>
-              <Link
-                to="/"
-                className="flex items-center py-2 px-3 rounded hover:bg-gray-500 hover:text-white transition duration-200"
-              >
-                Verified-No
-              </Link>
-            </li> */}
-              <li>
-                <Link
-                  to="/"
-                  className="flex items-center py-2 px-3 rounded hover:bg-emerald-500 hover:text-white transition duration-200"
-                >
-                  Approved-Applications
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="/"
-                  className="flex items-center py-2 px-3 rounded hover:bg-emerald-500 hover:text-white transition duration-200"
-                >
-                  Rejected-Applications
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="/"
-                  className="flex items-center py-2 px-3 rounded hover:bg-emerald-500 hover:text-white transition duration-200"
+                  to="/admin/users"
+                  className={`flex items-center py-2 px-3 rounded hover:bg-emerald-500 hover:text-white transition duration-200 ${activeLink === "/admin/users" ? "bg-emerald-400 text-white" : ""}`}
+                  onClick={() => handleSetActiveLink("/admin/users")}
                 >
                   User Management
                 </Link>
               </li>
               <li>
                 <Link
-                  to="/"
-                  className="flex items-center py-2 px-3 rounded hover:bg-emerald-500 hover:text-white transition duration-200"
+                  to="/admin/token"
+                  className={`flex items-center py-2 px-3 rounded hover:bg-emerald-500 hover:text-white transition duration-200 ${activeLink === "/admin/token" ? "bg-emerald-400 text-white" : ""}`}
+                  onClick={() => handleSetActiveLink("/admin/token")}
                 >
-                  Reports
+                  Token Generator
                 </Link>
               </li>
               <li>
                 <Link
                   to="/"
-                  className="flex items-center py-2 px-3 rounded hover:bg-emerald-500 hover:text-white transition duration-200"
+                  className={`flex items-center py-2 px-3 rounded hover:bg-emerald-500 hover:text-white transition duration-200 ${activeLink === "/" ? "bg-emerald-400 text-white" : ""}`}
+                  onClick={() => handleSetActiveLink("/")}
                 >
                   <TbLogout className="mr-2" />
                   Logout

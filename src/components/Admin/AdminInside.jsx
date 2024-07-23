@@ -232,7 +232,7 @@ function AdminInside() {
                                                 </span>
                                               </td>
                                               <td className="px-11 py-4 text-blue-400 font-bold cursor-pointer">
-                                                <Link to={"/table"}>View</Link>
+                                                <Link to={"/admin/table"}>View</Link>
                                               </td>
                                               <td>
                                                 <div className="relative">

@@ -1,27 +1,27 @@
 import React from "react";
 import { IoIosCloseCircle } from "react-icons/io";
-import "./DisclaimerModal.css"
+import "./DisclaimerModal.css";
 
-function DisclaimerModal({setModal}) {
+function DisclaimerModal({ setModal }) {
   return (
     <div
       id="default-modal"
       tabIndex="-1"
       aria-hidden="true"
-      className=" fixed h-screen scroll overflow-y-auto bg-black bg-opacity-45  flex justify-center items-center   top-0 right-0 left-0 z-50  w-full md:inset-0  max-h-full"
+      className=" fixed h-screen scroll overflow-y-auto bg-black bg-opacity-45  flex justify-center items-center
+       top-0 right-0 left-0 z-50  w-full md:inset-0   max-h-full"
     >
-      <div className="relative  p-4 w-3/4 lg:w-2/4 max-h-full">
+      <div className="relative  p-4 w-full lg:w-2/4 max-h-full">
         <div className="relative  bg-sky-50 rounded-lg shadow">
-          <div className="flex items-center justify-center p-4 md:p-5 border-b rounded-t text-center dark:border-gray-600">
-            <h3 className=" text-2xl font-bold">
-                DISCLAIMER 
-            </h3>
+          <div className="flex items-center justify-center overflow-y-scroll p-4 md:p-5 border-b rounded-t text-center dark:border-gray-600">
+            <h3 className=" text-2xl font-bold">DISCLAIMER</h3>
             {/* <IoIosCloseCircle className="text-3xl absolute right-8 hover:text-gray-600 transition-colors duration-200" onClick={()=>setModal(false)} /> */}
-
           </div>
 
           <div className="p-4 md:p-5 space-y-4">
-            <span className=" font-bold text-lg">Read Carefully Before Submitting</span>
+            <span className=" font-bold text-lg">
+              Read Carefully Before Submitting
+            </span>
             <ol className=" list-decimal pt-1  p-5 text-lg">
               <li className=" font-bold">
                 Accuracy of Information:{" "}
@@ -109,13 +109,13 @@ function DisclaimerModal({setModal}) {
           <div className="flex justify-center items-center p-4 md:p-5 border-t border-gray-200 rounded-b dark:border-gray-600">
             <button
               data-modal-hide="default-modal"
-              type="button"
-              className="text-white text-lg w-1/4 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-                onClick={()=>setModal(false)}
+              className="text-white text-lg lg:w-1/4 bg-emerald-600 text-center w-full
+               hover:bg-emerald-700 hover:ring-2  focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg px-5 py-2.5 
+                "
+              onClick={() => setModal(false)}
             >
               I Agree
             </button>
-            
           </div>
         </div>
       </div>
