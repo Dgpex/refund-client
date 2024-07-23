@@ -1,6 +1,5 @@
 import React from "react";
 import Banner1 from "/Banner1.jpg"; // Ensure this path is correct
-
 function Banner() {
   return (
     <div className="relative mb-40 text-center flex items-center justify-center flex-col">
@@ -14,9 +13,10 @@ function Banner() {
 
       {/* Text Content */}
       <div className="relative z-10 p-4 mt-[5%]">
-        <h3 className="text-lg font-bold text-emerald-300 lg:mt-16 mt-4">
+        <h3 className="text-lg font-bold  text-emerald-300 lg:mt-16 mt-4">
           WELCOME TO DARWESH GROUP
         </h3>
+       
         <h2 className="text-4xl font-bold text-white mt-2">
           "Your Investment is Safe with Us <br /> - Refund Assured"
         </h2>
@@ -35,6 +35,7 @@ function Banner() {
           existing one, our portal is designed to guide you every step of the way.
         </p> */}
         {/* <button className="bg-emerald-400 font-semibold rounded-md py-2 px-2 mt-4 text-white">Claim Now !</button> */}
+        
         <a
           href="/claims"
           className="relative inline-flex items-center justify-center mt-4 p-4 px-6 py-3 overflow-hidden font-medium text-emerald-400 transition duration-300 ease-out border-2 border-emerald-400 rounded-full shadow-md group"

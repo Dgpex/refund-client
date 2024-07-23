@@ -3,11 +3,11 @@ import { FaLocationDot } from "react-icons/fa6";
 import { MdEmail, MdOutlineLocalPhone } from "react-icons/md";
 import { CiMail } from "react-icons/ci";
 
-function Footer() {
+function Footer({showForm}) {
   return (
     <div>
       <hr />
-      <footer class="relative z-10 lg:p-5 bg-white dark:bg-dark pb-10 pt-5 lg:pt-[50px]">
+      <footer class="relative z-10 lg:p-5 bg-white pb-10 pt-5 lg:pt-[50px]">
         <div class="container mx-auto">
           <div class="flex flex-wrap lg:gap-20">
             <div class="w-full px-4 sm:w-2/3 lg:w-3/12">
@@ -61,7 +61,7 @@ function Footer() {
             </div>
             <div class="w-full px-4 sm:w-1/2 lg:w-2/12">
               <div class="w-full mb-10">
-                <h4 class="text-lg font-bold text-dark dark:text-white mb-4">
+                <h4 class="text-lg font-bold text-dark mb-4">
                   Quick Links
                 </h4>
                 <ul class="space-y-3">

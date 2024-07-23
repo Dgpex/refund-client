@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import DisclaimerModal from "./DisclaimerModal";
 import axios from "axios";
 import { useSelector } from "react-redux";
 import Swal from "sweetalert2";
 import "./Form.css";
+import { useNavigate } from "react-router-dom";
 
 function InputGroup2({
   label,
@@ -14,6 +15,7 @@ function InputGroup2({
   onBlur,
   type = "text",
   error,
+  max,
   inputClassName = "",
   disabled,
   onMouseOver,
@@ -31,6 +33,7 @@ function InputGroup2({
         onChange={onChange}
         onMouseOver={onMouseOver}
         onMouseLeave={onMouseLeave}
+        max={max}
         onFocus={onFocus}
         onBlur={onBlur}
         onInput={onInput}
@@ -46,7 +49,7 @@ function InputGroup2({
     </div>
   );
 }
-
+const today = new Date().toISOString().split("T")[0];
 function Form() {
   const [formData, setFormData] = useState({
     name: "",
@@ -65,25 +68,31 @@ function Form() {
     agent_mobile_number: "",
     sub_agent_name: "",
     bond_reference_number: "",
-    paymentFiles: [],
-    bondFiles: [],
+    paymentFile: null,
+    bondFile: null,
   });
 
   const [errors, setErrors] = useState({});
   const [Modal, setModal] = useState(true);
   const [isOnline, setIsOnline] = useState(false);
   const [fileError, setFileError] = useState("");
-  const [paymentFile, setPaymentFile] = useState(null);
   const [paymentMethod, setPaymentMethod] = useState(""); // "" | "cash" | "online"
   const [termsAccepted, setTermsAccepted] = useState(true);
   const [conditionsAccepted, setConditionsAccepted] = useState(true);
-
+  const navigate = useNavigate;
   const api = process.env.REACT_APP_API_HOST;
+  const today = new Date().toISOString().split("T")[0];
 
   const token = useSelector((state) => state.auth.token);
 
   const handleInputAlphabetChange = (e) => {
     const { name, value } = e.target;
+    // if (value.length > 0) {
+    //   setErrors((prevError) => ({
+    //     ...prevError,
+    //     paymentFile: "",
+    //   }));
+    // }
     const newValue = value.replace(/[^a-zA-Z\s]/g, "");
     e.target.value = newValue;
     setFormData({
@@ -155,35 +164,45 @@ function Form() {
   };
 
   const handleFileChange = (e) => {
+    const { name } = e.target;
     const files = e.target.files;
+
     const fileArray = Array.from(files);
 
-    if (e.target.name === "paymentFiles") {
+    if (e.target.name === "paymentFile") {
       if (paymentMethod === "online") {
-        const nonImageFile = fileArray.find(
-          (file) => !file.type.startsWith("image/")
-        );
-        if (nonImageFile) {
-          setFileError("Only image files are allowed.");
-        } else {
-          setFileError("");
-          setFormData((prevFormData) => ({
-            ...prevFormData,
-            paymentFiles: fileArray,
-          }));
-        }
+        // const nonImageFile = fileArray.find(
+        //   (file) => !file.type.startsWith("image/")
+        // );
+        // if (nonImageFile) {
+        //   setFileError("Only image files are allowed.");
+        // } else {
+
+        setFileError("");
+        setFormData((prevFormData) => ({
+          ...prevFormData,
+          paymentFile: files,
+        }));
+        setErrors((prevError) => ({
+          ...prevError,
+          paymentFile: "",
+        }));
       } else if (paymentMethod === "cash") {
         setFormData((prevFormData) => ({
           ...prevFormData,
-          paymentFiles: [], // Clear paymentFiles if 'cash' is selected
+          [name]: "cash",
         }));
       }
     }
 
-    if (e.target.name === "bondFiles") {
+    if (e.target.name === "bondFile") {
       setFormData((prevFormData) => ({
         ...prevFormData,
-        bondFiles: fileArray,
+        bondFile: files,
+      }));
+      setErrors((prevError) => ({
+        ...prevError,
+        bondFile: "",
       }));
     }
   };
@@ -233,8 +252,8 @@ function Form() {
 
     // Check if all fields are filled
     Object.entries(formData).forEach(([key, value]) => {
-      if (!value && key !== "paymentFiles" && key !== "bondFiles") {
-        // Skip validation for paymentFiles and bondFiles here
+      if (!value && key !== "paymentFile" && key !== "bondFile") {
+        // Skip validation for paymentFile and bondFile here
         newErrors[key] = "This field is required.";
       } else {
         const error = validateField(key, value);
@@ -242,12 +261,15 @@ function Form() {
       }
     });
 
-    // Check for paymentFiles errors based on paymentMethod
+    // Check for paymentFile errors based on paymentMethod
     if (
       paymentMethod === "online" &&
-      (!formData.paymentFiles || formData.paymentFiles.length === 0)
+      (!formData.paymentFile || formData.paymentFile.length === 0)
     ) {
-      newErrors.paymentFiles = "Please upload an image file.";
+      newErrors.paymentFile = "Please upload payment file.";
+    }
+    if (!formData.bondFile || formData.bondFile.length === 0) {
+      newErrors.bondFile = "Please Upload Bond agreement Document";
     }
 
     if (fileError) {
@@ -256,14 +278,9 @@ function Form() {
     }
 
     // Check if terms and conditions are accepted
-    if (!termsAccepted) {
+    if (!termsAccepted || !conditionsAccepted) {
       alert("You must accept the Terms and Conditions.");
       newErrors.termsAccepted = "You must accept the terms and conditions.";
-    }
-
-    if (!conditionsAccepted) {
-      alert("You must accept the Terms and Conditions.");
-      newErrors.conditionsAccepted = "You must accept the conditions.";
     }
 
     setErrors(newErrors);
@@ -280,18 +297,34 @@ function Form() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     if (validateForm()) {
       try {
-        console.log("submitting...", formData);
+        // Create a new FormData instance
+        const formDataToSend = new FormData();
+
+        // Append fields to FormData
+        for (const key in formData) {
+          if (formData[key] instanceof File) {
+            formDataToSend.append(key, formData[key]); // Append file directly
+          } else {
+            formDataToSend.append(key, formData[key]); // Append other fields
+          }
+        }
+
+        console.log("Submitting...", formDataToSend);
+
         const res = await axios.post(
-          `${api}/api/claim/save-claim-details`,
-          { formData },
+          ` ${api}/api/claim/save-claim-details`,
+          formDataToSend,
           {
             headers: {
               Authorization: `Bearer ${token}`,
+              "Content-Type": "multipart/form-data",
             },
           }
         );
+
         console.log(res.data);
 
         await Swal.fire({
@@ -313,7 +346,7 @@ function Form() {
 
   return (
     <div className="flex justify-center w-full h-max bg-gray-300">
-      <div className="flex flex-col lg:w-1/2 w-full mx-auto shadow-black shadow-2xl my-4 bg-white items-left justify-left">
+      <div className="flex flex-col lg:w-[700px] w-full mx-auto shadow-black shadow-2xl my-4 bg-white items-left justify-left">
         <div className="bg-gradient-to-br from-emerald-400 to-emerald-600 py-8 flex items-center justify-center">
           <h3 className="lg:text-3xl text-white text-2xl font-bold">
             Refund Claim Application
@@ -329,7 +362,7 @@ function Form() {
             <h3 className="text-2xl text-emerald-600 font-bold">
               Enter Your Details
             </h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
               <InputGroup2
                 name="name"
                 label="Full Name"
@@ -348,105 +381,101 @@ function Form() {
                 inputLabel={"Mobile Number"}
                 value={formData.mobile_number}
                 onInput={handleInputMobileNumberChange}
-                max="10"
                 onChange={handleInputChange}
                 onBlur={handleBlur}
                 error={errors.mobile_number}
               />
             </div>
-            <div className="gap-2 space-y-2">
-              <h3 className="text-2xl text-emerald-600 font-bold">Address</h3>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                <InputGroup2
-                  name="houseAddress"
-                  label="H.No, Street, Address Line"
-                  inputLabel={"Address"}
-                  value={formData.houseAddress}
-                  onChange={handleInputChange}
-                  onInput={handleInputChange}
-                  onBlur={handleBlur}
-                  error={errors.houseAddress}
-                />
-                <InputGroup2
-                  name="city"
-                  label="City"
-                  inputLabel={"City"}
-                  value={formData.city}
-                  onInput={handleInputAlphabetChange}
-                  onChange={handleInputChange}
-                  onBlur={handleBlur}
-                  error={errors.city}
-                />
-                <div className="col-span-1 sm:col-span-2">
-                  <label>State</label>
-                  <select
-                    name="state"
-                    id="state"
-                    className="w-full form-control border-2 p-3 rounded-lg"
-                    onChange={handleInputAlphabetChange}
-                  >
-                    <option value="Karnataka">Karnataka</option>
-                    <option value="Andhra Pradesh">Andhra Pradesh</option>
-                    <option value="Andaman and Nicobar Islands">
-                      Andaman and Nicobar Islands
-                    </option>
-                    <option value="Arunachal Pradesh">Arunachal Pradesh</option>
-                    <option value="Assam">Assam</option>
-                    <option value="Bihar">Bihar</option>
-                    <option value="Chandigarh">Chandigarh</option>
-                    <option value="Chhattisgarh">Chhattisgarh</option>
-                    <option value="Dadar and Nagar Haveli">
-                      Dadar and Nagar Haveli
-                    </option>
-                    <option value="Daman and Diu">Daman and Diu</option>
-                    <option value="Delhi">Delhi</option>
-                    <option value="Lakshadweep">Lakshadweep</option>
-                    <option value="Puducherry">Puducherry</option>
-                    <option value="Goa">Goa</option>
-                    <option value="Gujarat">Gujarat</option>
-                    <option value="Haryana">Haryana</option>
-                    <option value="Himachal Pradesh">Himachal Pradesh</option>
-                    <option value="Jammu and Kashmir">Jammu and Kashmir</option>
-                    <option value="Jharkhand">Jharkhand</option>
-                    <option value="Kerala">Kerala</option>
-                    <option value="Madhya Pradesh">Madhya Pradesh</option>
-                    <option value="Maharashtra">Maharashtra</option>
-                    <option value="Manipur">Manipur</option>
-                    <option value="Meghalaya">Meghalaya</option>
-                    <option value="Mizoram">Mizoram</option>
-                    <option value="Nagaland">Nagaland</option>
-                    <option value="Odisha">Odisha</option>
-                    <option value="Punjab">Punjab</option>
-                    <option value="Rajasthan">Rajasthan</option>
-                    <option value="Sikkim">Sikkim</option>
-                    <option value="Tamil Nadu">Tamil Nadu</option>
-                    <option value="Telangana">Telangana</option>
-                    <option value="Tripura">Tripura</option>
-                    <option value="Uttar Pradesh">Uttar Pradesh</option>
-                    <option value="Uttarakhand">Uttarakhand</option>
-                    <option value="West Bengal">West Bengal</option>
-                  </select>
-                </div>
-                <InputGroup2
-                  name="country"
-                  label="Country"
-                  inputLabel={"Country"}
-                  value={formData.country}
-                  onBlur={handleBlur}
-                  error={errors.country}
-                />
-                <InputGroup2
-                  type="number"
-                  name="postal_code"
-                  label="ZIP/Postal Code"
-                  inputLabel={"ZIP/Postal Code"}
-                  value={formData.postal_code}
-                  onInput={handleInputZipCodeChange}
-                  onChange={handleInputChange}
-                  onBlur={handleBlur}
-                  error={errors.postal_code}
-                />
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+              <InputGroup2
+                name="houseAddress"
+                label="H.No, Street, Address Line"
+                inputLabel={"Address"}
+                value={formData.houseAddress}
+                onChange={handleInputChange}
+                onInput={handleInputChange}
+                onBlur={handleBlur}
+                error={errors.houseAddress}
+              />
+              <InputGroup2
+                name="city"
+                label="City"
+                inputLabel={"City"}
+                value={formData.city}
+                onInput={handleInputAlphabetChange}
+                onChange={handleInputChange}
+                onBlur={handleBlur}
+                error={errors.city}
+              />
+              <div className="col-span-1 sm:col-span-2">
+                <label>State</label>
+                <select
+                  name="state"
+                  id="state"
+                  className="w-full form-control border-2 p-3 rounded-lg"
+                  onChange={handleInputAlphabetChange}
+                >
+                  <option value="Karnataka">Karnataka</option>
+                  <option value="Andhra Pradesh">Andhra Pradesh</option>
+                  <option value="Andaman and Nicobar Islands">
+                    Andaman and Nicobar Islands
+                  </option>
+                  <option value="Arunachal Pradesh">Arunachal Pradesh</option>
+                  <option value="Assam">Assam</option>
+                  <option value="Bihar">Bihar</option>
+                  <option value="Chandigarh">Chandigarh</option>
+                  <option value="Chhattisgarh">Chhattisgarh</option>
+                  <option value="Dadar and Nagar Haveli">
+                    Dadar and Nagar Haveli
+                  </option>
+                  <option value="Daman and Diu">Daman and Diu</option>
+                  <option value="Delhi">Delhi</option>
+                  <option value="Lakshadweep">Lakshadweep</option>
+                  <option value="Puducherry">Puducherry</option>
+                  <option value="Goa">Goa</option>
+                  <option value="Gujarat">Gujarat</option>
+                  <option value="Haryana">Haryana</option>
+                  <option value="Himachal Pradesh">Himachal Pradesh</option>
+                  <option value="Jammu and Kashmir">Jammu and Kashmir</option>
+                  <option value="Jharkhand">Jharkhand</option>
+                  <option value="Kerala">Kerala</option>
+                  <option value="Madhya Pradesh">Madhya Pradesh</option>
+                  <option value="Maharashtra">Maharashtra</option>
+                  <option value="Manipur">Manipur</option>
+                  <option value="Meghalaya">Meghalaya</option>
+                  <option value="Mizoram">Mizoram</option>
+                  <option value="Nagaland">Nagaland</option>
+                  <option value="Odisha">Odisha</option>
+                  <option value="Punjab">Punjab</option>
+                  <option value="Rajasthan">Rajasthan</option>
+                  <option value="Sikkim">Sikkim</option>
+                  <option value="Tamil Nadu">Tamil Nadu</option>
+                  <option value="Telangana">Telangana</option>
+                  <option value="Tripura">Tripura</option>
+                  <option value="Uttar Pradesh">Uttar Pradesh</option>
+                  <option value="Uttarakhand">Uttarakhand</option>
+                  <option value="West Bengal">West Bengal</option>
+                </select>
               </div>
+              <InputGroup2
+                name="country"
+                label="Country"
+                inputLabel={"Country"}
+                value={formData.country}
+                onBlur={handleBlur}
+                error={errors.country}
+              />
+              <InputGroup2
+                type="number"
+                name="postal_code"
+                label="ZIP/Postal Code"
+                inputLabel={"ZIP/Postal Code"}
+                value={formData.postal_code}
+                onInput={handleInputZipCodeChange}
+                onChange={handleInputChange}
+                onBlur={handleBlur}
+                error={errors.postal_code}
+              />
             </div>
           </div>
           <h3 className="text-2xl text-emerald-600 font-bold pt-2">
@@ -485,51 +514,46 @@ function Form() {
               onBlur={handleBlur}
               error={errors.bond_reference_number}
             />
-            <div className="col-span-1 sm:col-span-2 md:flex md:gap-4">
-              <InputGroup2
-                name="invested_amount"
-                label="Invested Amount"
-                inputLabel={"Invested Amount"}
-                value={formData.invested_amount}
-                onInput={handleInputNumberChange}
-                onChange={handleInputChange}
-                onBlur={handleBlur}
-                error={errors.invested_amount}
-              />
-            </div>
-            <div className="flex flex-col col-span-1 sm:col-span-2">
-              <label>Invested Date</label>
-              <InputGroup2
-                placeholder="Invested Date"
-                type="date"
-                name="invested_date"
-                label="Invested Date"
-                value={formData.invested_date}
-                onChange={handleInputChange}
-                onBlur={handleBlur}
-                error={errors.invested_date}
-              />
-            </div>
-            <div className="col-span-1 sm:col-span-2 flex items-center justify-center">
-              <InputGroup2
-                type="number"
-                name="monthly_received_amount"
-                inputLabel={"Enter Amount You Received Monthly"}
-                label="Enter Amount You Received Monthly"
-                value={formData.monthly_received_amount}
-                onInput={handleInputNumberChange}
-                onChange={handleInputChange}
-                onBlur={handleBlur}
-                error={errors.monthly_received_amount}
-              />
-            </div>
-            <div className="col-span-1 sm:col-span-2 flex flex-col sm:flex-row p-2 items-center  sm:space-x-4">
+            <InputGroup2
+              name="invested_amount"
+              label="Invested Amount"
+              inputLabel={"Invested Amount"}
+              value={formData.invested_amount}
+              onInput={handleInputNumberChange}
+              onChange={handleInputChange}
+              onBlur={handleBlur}
+              error={errors.invested_amount}
+            />
+            <div>
+            <InputGroup2
+              name="invested_date"
+              inputLabel={"Invested Date"}
+              placeholder="Invested Date"
+              type="date"
+              max={today}
+              value={formData.invested_date}
+              onChange={handleInputChange}
+              onBlur={handleBlur}
+              error={errors.invested_date}
+            /></div>
+            <InputGroup2
+              type="number"
+              name="monthly_received_amount"
+              inputLabel={"Enter Amount You Received Monthly"}
+              label="Enter Amount You Received Monthly"
+              value={formData.monthly_received_amount}
+              onInput={handleInputNumberChange}
+              onChange={handleInputChange}
+              onBlur={handleBlur}
+              error={errors.monthly_received_amount}
+            />
+            <div className="col-span-1 border  sm:col-span-2 flex flex-col sm:flex-row p-2 items-center  sm:space-x-4">
               <label className="font-semibold">Payment Method:</label>
               <div className="flex sm:flex-row items-center space-x-4 sm:space-x-4 p-2 ">
                 <label className="flex items-center space-x-2 ">
                   <input
                     type="radio"
-                    name="paymentFiles"
+                    name="paymentFile"
                     value="online"
                     onChange={handleSelectChange}
                     className="form-radio text-emerald-600"
@@ -541,7 +565,7 @@ function Form() {
                 <label className="flex items-center space-x-2">
                   <input
                     type="radio"
-                    name="paymentFiles"
+                    name="paymentFile"
                     value="cash"
                     onChange={handleSelectChange}
                     className="form-radio text-emerald-600"
@@ -559,15 +583,15 @@ function Form() {
                     </label>
                     <input
                       type="file"
-                      name="paymentFiles"
+                      name="paymentFile"
                       onChange={handleFileChange}
-                      multiple
+                      // multiple
                       className="block w-full text-sm text-slate-500
             file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold
             file:bg-emerald-50 file:text-emerald-700
             hover:file:bg-emerald-100"
                     />
-                    <span className=" text-red-500">{errors.paymentFiles}</span>
+                    <span className=" text-red-500">{errors.paymentFile}</span>
                   </div>
                   {fileError && (
                     <span className="text-red-500 text-sm">{fileError}</span>
@@ -613,17 +637,16 @@ function Form() {
               </label>
               <input
                 type="file"
-                multiple
-                name="bondFiles"
+                // multiple
+                name="bondFile"
                 onChange={handleFileChange}
-                className="block w-full text-sm text-slate-500
+                className="block w-max text-sm text-slate-500
                       file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold
-                      file:bg-emerald-50 file:text-emerald-700
+                      file:bg-emerald-50 file:text-emerald-700 
                       hover:file:bg-emerald-100"
               />
             </div>
-            <span className=" text-red-500">{errors.bondFiles}</span>
-
+            <span className=" text-sm text-red-500">{errors.bondFile}</span>
           </div>
           <div className="flex flex-col gap-4 items-center">
             <div>

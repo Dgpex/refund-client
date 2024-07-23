@@ -3,7 +3,8 @@ import axios from "axios";
 import { useSelector } from "react-redux";
 import Swal from "sweetalert2";
 import { IoClose } from "react-icons/io5";
-
+import { FaInfoCircle } from "react-icons/fa";
+import { Link } from "react-router-dom";
 const TrackApplication = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalContent, setModalContent] = useState("");
@@ -22,6 +23,7 @@ const TrackApplication = () => {
   const [payment, setPayment] = useState([]);
   const [selectedClaimId, setSelectedClaimId] = useState(""); // New state for selected claim ID
   const [otpSentMessage, setOtpSentMessage] = useState(""); // New state for OTP sent message
+  const [noApplications, setNoApplications] = useState(false);
 
   const api = process.env.REACT_APP_API_HOST;
   const token = useSelector((state) => state.auth.token);
@@ -35,12 +37,16 @@ const TrackApplication = () => {
       });
       const claimsArray = response.data.claims;
       if (Array.isArray(claimsArray)) {
-        setPayment(claimsArray);
+        setNoApplications(claimsArray.length === 0);
+        setPayment(claimsArray.length === 0 ? [] : claimsArray);
       } else {
+        setNoApplications(true);
         setPayment([]);
       }
     } catch (error) {
       console.error("Error fetching user claims:", error);
+      setNoApplications(true);
+      setPayment([]);
     }
   };
 
@@ -186,228 +192,254 @@ const TrackApplication = () => {
     setAadhaarNumber(e.target.value);
     setErrorMessage(""); // Clear error message when user starts typing
   };
+  const handleNoClaimsRedirect = () => {};
 
   return (
-    <div className="flex flex-col items-center min-h-screen mt-12 px-4">
-      <h2 className="text-2xl font-bold mb-4 text-center">
-        Track Your Refund Application
-      </h2>
-      <div className="overflow-x-auto w-3/4">
-        <table className="min-w-full bg-white border-collapse rounded-lg">
-          <thead>
-            <tr className="bg-emerald-500 text-white border">
-              <th className="px-4 py-2">Serial No.</th>
-              <th className="px-4 py-2">Aadhaar</th>
-              <th className="px-4 py-2">Bank</th>
-              <th className="px-4 py-2">Application Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            {Array.isArray(payment) &&
-              payment.map((refund, index) => {
-                return (
-                  <tr key={index} className="border-b text-center">
-                    <td className="px-4 py-2">{refund._id}</td>
-                    <td className="px-4 py-2">
-                      <button
-                        onClick={() => {
-                          if (!refund.aadharDetails?.isVerified) {
-                            openModal("Aadhaar", refund._id);
-                          }
-                        }}
-                        className={`px-3 py-1 text-white rounded-lg ${
-                          refund.aadharDetails?.isVerified
-                            ? "bg-green-600"
-                            : "bg-red-500"
-                        }`}
-                      >
-                        {refund.aadharDetails?.isVerified
-                          ? "Verified"
-                          : "Not Verified"}
-                      </button>
-                    </td>
-                    <td className="px-4 py-2">
-                      <button
-                        onClick={() => {
-                          if (!refund.bankDetails?.isVerified) {
-                            openModal("Bank", refund._id);
-                          }
-                        }}
-                        className={`px-2 py-1 text-white rounded-lg ${
-                          refund.bankDetails?.isVerified
-                            ? "bg-green-600"
-                            : "bg-red-500"
-                        }`}
-                      >
-                        {refund.bankDetails?.isVerified
-                          ? "Verified"
-                          : "Not Verified"}
-                      </button>
-                    </td>
+    <>
+      {noApplications ? (
+        <div className="text-center mb-40 font-semibold">
+          <p className="text-2xl justify-center flex mb-8 mt-[10%]">
+            No Applications Found
+          </p>
+          <Link
+            to="/claims"
+            className="border-2 border-emerald-500 px-3 text-emerald-600 py-2"
+          >
+            Claim Now!
+          </Link>
+        </div>
+      ) : (
+        <div className="flex flex-col items-center min-h-screen lg:mt-5 lg:px-4 p-5">
+          <h2 className="text-2xl font-bold mb-4 text-center">
+            Track Your Refund Application
+          </h2>
 
-                    <td className="px-4 py-2">{refund.status}</td>
-                  </tr>
-                );
-              })}
-          </tbody>
-        </table>
-      </div>
-      {isModalOpen && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 p-4">
-          <div className="bg-white p-6 rounded-md shadow-md w-full max-w-sm">
-            <h2 className="text-lg font-bold mb-4">
-              {modalContent === "Aadhaar"
-                ? "Aadhaar Verification"
-                : modalContent === "Bank"
-                ? "Bank Verification"
-                : "Enter OTP"}
-            </h2>
-            {errorMessage && (
-              <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4">
-                <span className="block sm:inline">{errorMessage}</span>
-              </div>
-            )}
-            {otpSentMessage && (
-              <div className="bg-blue-100 border border-blue-400 text-blue-700 px-4 py-3 rounded relative mb-4">
-                <span className="block sm:inline">{otpSentMessage}</span>
-              </div>
-            )}
-            {modalContent === "Aadhaar" && (
-              <div className="relative p-4">
-                <button
-                  onClick={closeModal} // Add a function to handle the close action
-                  className="absolute -top-8 right-2 text-gray-500 hover:text-gray-800"
-                >
-                  <IoClose />
-                </button>
-                <label
-                  className="block mb-2 text-sm font-medium text-gray-700"
-                  htmlFor="aadhaarNumber"
-                >
-                  Aadhaar Number
-                </label>
-                <input
-                  type="text"
-                  value={aadhaarNumber}
-                  onChange={(e) => setAadhaarNumber(e.target.value)}
-                  className="w-full mb-4 p-2 border border-gray-300 rounded-md"
-                  placeholder="Enter Aadhaar Number"
-                />
-                <button
-                  onClick={handleAadhaarVerify}
-                  className="bg-emerald-500 text-white px-4 py-2 rounded-md w-full"
-                  disabled={isLoading}
-                >
-                  {isLoading ? "Sending OTP..." : "Send OTP"}
-                </button>
-              </div>
-            )}
-            {modalContent === "Enter OTP" && (
-              <div className="relative p-4">
-                <button
-                  onClick={closeModal} // Add a function to handle the close action
-                  className="absolute -top-8 right-2 text-gray-500 hover:text-gray-800"
-                >
-                  <IoClose />
-                </button>
-                <label
-                  className="block mb-2 text-sm font-medium text-gray-700"
-                  htmlFor="otp"
-                >
-                  OTP
-                </label>
-                <input
-                  type="text"
-                  value={otp}
-                  onChange={(e) => setOtp(e.target.value)}
-                  className="w-full mb-4 p-2 border border-gray-300 rounded-md"
-                  placeholder="Enter OTP"
-                />
-                <button
-                  onClick={handleOtpVerify}
-                  className="bg-emerald-500 text-white px-4 py-2 rounded-md w-full"
-                  disabled={isLoading}
-                >
-                  {isLoading ? "Verifying OTP..." : "Verify OTP"}
-                </button>
-              </div>
-            )}
-            {modalContent === "Bank" && (
-              <div className="relative p-4">
-                <button
-                  onClick={closeModal} // Add a function to handle the close action
-                  className="absolute -top-8 right-2 text-gray-500 hover:text-gray-800"
-                >
-                  <IoClose />
-                </button>
+          <p className="lg:w-3/4 gap-2 lg:flex items-center text-red-400">
+            <FaInfoCircle className="sm:block hidden" /> From a single mobile
+            number, you can submit only up to three applications.
+          </p>
+          <p className="lg:w-3/4 gap-2 flex items-center text-red-400 mb-2 lg:ml-12">
+            If you have not completed Aadhar and bank verification, your
+            application will not be accepted.
+          </p>
+          <div className="overflow-x-auto lg:w-3/4 w-full">
+            <table className="min-w-full bg-white border-collapse rounded-lg">
+              <thead>
+                <tr className="bg-emerald-500 text-white border">
+                  <th className="px-4 py-2">Serial No.</th>
+                  <th className="px-4 py-2">Aadhaar</th>
+                  <th className="px-4 py-2">Bank</th>
+                  <th className="px-4 py-2">Application Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                {Array.isArray(payment) &&
+                  payment.map((refund, index) => {
+                    return (
+                      <tr key={index} className="border-b text-center">
+                        <td className="px-4 py-2">{refund._id}</td>
+                        <td className="px-4 py-2">
+                          <button
+                            onClick={() => {
+                              if (!refund.aadharDetails?.isVerified) {
+                                openModal("Aadhaar", refund._id);
+                              }
+                            }}
+                            className={`px-3 py-1 text-white rounded-lg ${
+                              refund.aadharDetails?.isVerified
+                                ? "bg-green-600"
+                                : "bg-red-500"
+                            }`}
+                          >
+                            {refund.aadharDetails?.isVerified
+                              ? "Verified"
+                              : "Verify now !"}
+                          </button>
+                        </td>
+                        <td className="px-4 py-2">
+                          <button
+                            onClick={() => {
+                              if (!refund.bankDetails?.isVerified) {
+                                openModal("Bank", refund._id);
+                              }
+                            }}
+                            className={`px-2 py-1 text-white rounded-lg ${
+                              refund.bankDetails?.isVerified
+                                ? "bg-green-600"
+                                : "bg-red-500"
+                            }`}
+                          >
+                            {refund.bankDetails?.isVerified
+                              ? "Verified"
+                              : "Verify Now !"}
+                          </button>
+                        </td>
 
-                <div>
-                  <label
-                    htmlFor="beneficiaryAccount"
-                    className="block text-sm font-medium text-gray-700"
-                  >
-                    Account Number
-                  </label>
-                  <input
-                    type="text"
-                    id="beneficiaryAccount"
-                    name="beneficiaryAccount"
-                    value={bankDetails.beneficiaryAccount}
-                    onChange={handleInputChange}
-                    placeholder="Enter Account number"
-                    className="w-full mb-4 p-2 border border-gray-300 rounded-md"
-                  />
-                </div>
-
-                <div>
-                  <label
-                    htmlFor="beneficiaryIFSC"
-                    className="block text-sm font-medium text-gray-700"
-                  >
-                    Beneficiary IFSC
-                  </label>
-                  <input
-                    type="text"
-                    id="beneficiaryIFSC"
-                    name="beneficiaryIFSC"
-                    value={bankDetails.beneficiaryIFSC}
-                    onChange={handleInputChange}
-                    placeholder="Enter IFSC Code"
-                    className="w-full mb-4 p-2 border border-gray-300 rounded-md"
-                  />
-                </div>
-
-                <div>
-                  <label
-                    htmlFor="beneficiaryMobile"
-                    className="block text-sm font-medium text-gray-700"
-                  >
-                    Mobile Number
-                  </label>
-                  <input
-                    type="text"
-                    id="beneficiaryMobile"
-                    name="beneficiaryMobile"
-                    value={bankDetails.beneficiaryMobile}
-                    onChange={handleInputChange}
-                    placeholder="Enter Mobile Number"
-                    className="w-full mb-4 p-2 border border-gray-300 rounded-md"
-                  />
-                </div>
-
-                <button
-                  onClick={handleBankVerify}
-                  className="bg-emerald-400 text-white px-4 py-2 w-full rounded-lg"
-                  disabled={isLoading}
-                >
-                  {isLoading ? "Verifying..." : "Verify"}
-                </button>
-              </div>
-            )}
+                        <td className="px-4 py-2">{refund.status}</td>
+                      </tr>
+                    );
+                  })}
+              </tbody>
+            </table>
           </div>
+          {isModalOpen && (
+            <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 p-4">
+              <div className="bg-white p-6 rounded-md shadow-md w-full max-w-sm">
+                <h2 className="text-lg font-bold mb-4">
+                  {modalContent === "Aadhaar"
+                    ? "Aadhaar Verification"
+                    : modalContent === "Bank"
+                    ? "Bank Verification"
+                    : "Enter OTP"}
+                </h2>
+                {errorMessage && (
+                  <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4">
+                    <span className="block sm:inline">{errorMessage}</span>
+                  </div>
+                )}
+                {otpSentMessage && (
+                  <div className="bg-blue-100 border border-blue-400 text-blue-700 px-4 py-3 rounded relative mb-4">
+                    <span className="block sm:inline">{otpSentMessage}</span>
+                  </div>
+                )}
+                {modalContent === "Aadhaar" && (
+                  <div className="relative p-4">
+                    <button
+                      onClick={closeModal} // Add a function to handle the close action
+                      className="absolute -top-8 right-2 text-gray-500 hover:text-gray-800"
+                    >
+                      <IoClose />
+                    </button>
+                    <label
+                      className="block mb-2 text-sm font-medium text-gray-700"
+                      htmlFor="aadhaarNumber"
+                    >
+                      Aadhaar Number
+                    </label>
+                    <input
+                      type="text"
+                      value={aadhaarNumber}
+                      onChange={(e) => setAadhaarNumber(e.target.value)}
+                      className="w-full mb-4 p-2 border border-gray-300 rounded-md"
+                      placeholder="Enter Aadhaar Number"
+                    />
+                    <button
+                      onClick={handleAadhaarVerify}
+                      className="bg-emerald-500 text-white px-4 py-2 rounded-md w-full"
+                      disabled={isLoading}
+                    >
+                      {isLoading ? "Sending OTP..." : "Send OTP"}
+                    </button>
+                  </div>
+                )}
+                {modalContent === "Enter OTP" && (
+                  <div className="relative p-4">
+                    <button
+                      onClick={closeModal} // Add a function to handle the close action
+                      className="absolute -top-8 right-2 text-gray-500 hover:text-gray-800"
+                    >
+                      <IoClose />
+                    </button>
+                    <label
+                      className="block mb-2 text-sm font-medium text-gray-700"
+                      htmlFor="otp"
+                    >
+                      OTP
+                    </label>
+                    <input
+                      type="text"
+                      value={otp}
+                      onChange={(e) => setOtp(e.target.value)}
+                      className="w-full mb-4 p-2 border border-gray-300 rounded-md"
+                      placeholder="Enter OTP"
+                    />
+                    <button
+                      onClick={handleOtpVerify}
+                      className="bg-emerald-500 text-white px-4 py-2 rounded-md w-full"
+                      disabled={isLoading}
+                    >
+                      {isLoading ? "Verifying OTP..." : "Verify OTP"}
+                    </button>
+                  </div>
+                )}
+                {modalContent === "Bank" && (
+                  <div className="relative p-4">
+                    <button
+                      onClick={closeModal} // Add a function to handle the close action
+                      className="absolute -top-8 right-2 text-gray-500 hover:text-gray-800"
+                    >
+                      <IoClose />
+                    </button>
+
+                    <div>
+                      <label
+                        htmlFor="beneficiaryAccount"
+                        className="block text-sm font-medium text-gray-700"
+                      >
+                        Account Number
+                      </label>
+                      <input
+                        type="text"
+                        id="beneficiaryAccount"
+                        name="beneficiaryAccount"
+                        value={bankDetails.beneficiaryAccount}
+                        onChange={handleInputChange}
+                        placeholder="Enter Account number"
+                        className="w-full mb-4 p-2 border border-gray-300 rounded-md"
+                      />
+                    </div>
+
+                    <div>
+                      <label
+                        htmlFor="beneficiaryIFSC"
+                        className="block text-sm font-medium text-gray-700"
+                      >
+                        Beneficiary IFSC
+                      </label>
+                      <input
+                        type="text"
+                        id="beneficiaryIFSC"
+                        name="beneficiaryIFSC"
+                        value={bankDetails.beneficiaryIFSC}
+                        onChange={handleInputChange}
+                        placeholder="Enter IFSC Code"
+                        className="w-full mb-4 p-2 border border-gray-300 rounded-md"
+                      />
+                    </div>
+
+                    <div>
+                      <label
+                        htmlFor="beneficiaryMobile"
+                        className="block text-sm font-medium text-gray-700"
+                      >
+                        Mobile Number
+                      </label>
+                      <input
+                        type="text"
+                        id="beneficiaryMobile"
+                        name="beneficiaryMobile"
+                        value={bankDetails.beneficiaryMobile}
+                        onChange={handleInputChange}
+                        placeholder="Enter Mobile Number"
+                        className="w-full mb-4 p-2 border border-gray-300 rounded-md"
+                      />
+                    </div>
+
+                    <button
+                      onClick={handleBankVerify}
+                      className="bg-emerald-400 text-white px-4 py-2 w-full rounded-lg"
+                      disabled={isLoading}
+                    >
+                      {isLoading ? "Verifying..." : "Verify"}
+                    </button>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
         </div>
       )}
-    </div>
+    </>
   );
 };
 

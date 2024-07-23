@@ -28,6 +28,7 @@ const Login = () => {
         setMessageType('error');
       }
     } catch (error) {
+      console.log(error.response.data);
       console.error('Error sending OTP:', error);
       setMessage('Error sending OTP');
       setMessageType('error');

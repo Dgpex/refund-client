@@ -4,27 +4,25 @@ import { useDispatch, useSelector } from "react-redux";
 import { BiHomeAlt } from "react-icons/bi";
 import { MdOutlineLocalPhone } from "react-icons/md";
 import { RiHome3Line } from "react-icons/ri";
-import { clearToken } from '../../authSlice'; // Import the clearToken action
+import { clearToken } from "../../authSlice"; // Import the clearToken action
 
-function Navbar({showForm}) {
+function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  
+
   // Use useSelector to get the token from Redux state
   const token = useSelector((state) => state.auth.token);
   const isLoggedIn = !!token; // Check if token is present
-
-
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
   };
 
   const handleLogout = () => {
-    dispatch(clearToken()); 
-    localStorage.removeItem('token'); 
-    navigate('/login'); 
+    dispatch(clearToken());
+    localStorage.removeItem("token");
+    navigate("/login");
   };
 
   return (
@@ -53,7 +51,6 @@ function Navbar({showForm}) {
             isMenuOpen ? "block" : "hidden"
           } lg:block`}
         >
-          {showForm &&
           <li>
             <Link
               to="/claims"
@@ -63,7 +60,8 @@ function Navbar({showForm}) {
               <span className="absolute right-0 flex items-center justify-start w-5 h-5 duration-300 transform translate-x-full group-hover:translate-x-0 ease"></span>
               <span className="relative">Claims</span>
             </Link>
-          </li>}
+          </li>
+
           <li>
             <Link
               to="/track"
@@ -111,7 +109,9 @@ function Navbar({showForm}) {
         </div>
       </nav>
       <div
-        className={`navbar-menu relative z-50 ${isMenuOpen ? "block" : "hidden"} lg:hidden`}
+        className={`navbar-menu relative z-50 ${
+          isMenuOpen ? "block" : "hidden"
+        } lg:hidden`}
       >
         <div className="navbar-backdrop fixed inset-0 bg-gray-800 opacity-25"></div>
         <nav className="fixed top-0 left-0 bottom-0 flex flex-col w-5/6 max-w-sm py-6 px-6 bg-white border-r overflow-y-auto">
@@ -157,6 +157,7 @@ function Navbar({showForm}) {
                 Claims
               </Link>
             </li>
+
             <li className="mb-1">
               <Link
                 className="block p-4 text-sm font-semibold text-gray-400 hover:bg-blue-50 hover:text-blue-600 rounded"
@@ -165,14 +166,14 @@ function Navbar({showForm}) {
                 Track
               </Link>
             </li>
-            <li className="mb-1">
+            {/* <li className="mb-1">
               <Link
                 className="block p-4 text-sm font-semibold text-gray-400 hover:bg-blue-50 hover:text-blue-600 rounded"
                 to="/contact"
               >
                 Contact Us
               </Link>
-            </li>
+            </li> */}
           </ul>
           <div className="mt-auto">
             <div className="pt-6">
