@@ -9,7 +9,7 @@ function Footer({ showForm }) {
       <hr />
       <footer className="relative z-10 lg:p-5 bg-white pb-10 pt-5 lg:pt-[50px]">
         <div className="container mx-auto">
-          <div className="flex flex-wrap lg:gap-16">
+          <div className="flex flex-wrap lg:gap-12">
             <div className="w-full px-4 sm:w-2/3 lg:w-3/12">
               <div className="w-full mb-10 lg:ml-10">
                 <a
@@ -32,7 +32,7 @@ function Footer({ showForm }) {
               </div>
             </div>
 
-            <div className="w-full sm:w-1/2 lg:w-2/12">
+            <div className="w-full sm:w-1/2 lg:w-3/12">
               <div className="w-full mb-10 lg:p-0 p-5">
                 <h4 className="text-lg font-bold mb-4">Get in touch </h4>
                 <ul>
@@ -40,7 +40,7 @@ function Footer({ showForm }) {
                     <MdEmail />
                     <a
                       href="mailto:darweshgroup.help@gmail.com"
-                      className="flex items-center"
+                      className="flex items-center text-sm"
                     >
                       darweshgroup.help@gmail.com
                     </a>
