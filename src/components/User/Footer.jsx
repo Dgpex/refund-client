@@ -36,7 +36,7 @@ function Footer({ showForm }) {
               <div class="w-full mb-10 lg:p-0 p-5">
                 <h4 class="text-lg font-bold mb-4">Get in touch </h4>
                 <ul>
-                  <li className="flex items-center gap-2 mt-3">
+                  <li className="flex items-center gap-1 mt-5">
                     <MdEmail />
                     <a
                       href="mailto:darweshgroup@gmail.com"
@@ -45,7 +45,7 @@ function Footer({ showForm }) {
                       darweshgroup@gmail.com
                     </a>
                   </li>
-                  <li className="flex items-center gap-2 mt-3">
+                  <li className="flex items-center gap-2 mt-6">
                     <MdOutlineLocalPhone />
                     <a
                       href="tel:+917835082074"
