@@ -86,10 +86,10 @@ function Navbar() {
         <div className="flex items-center space-x-8 lg:ml-auto">
           <a
             className="hidden lg:flex items-center text-emerald-500 gap-2"
-            href="tel:+911234567890"
+            href="tel:+917835082074 "
           >
-            <MdOutlineLocalPhone />
-            +91 1234567890
+            <MdOutlineLocalPhone className="mt-1" />
+            +91 7835082074 
           </a>
           {!isLoggedIn ? (
             <Link

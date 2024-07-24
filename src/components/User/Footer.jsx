@@ -50,10 +50,10 @@ function Footer({showForm}) {
                   <li className="flex items-center gap-2 mt-3">
                     <MdOutlineLocalPhone />
                     <a
-                      href="tel:+911234568765"
+                      href="tel:+917835082074"
                       className="flex items-center text-sm font-medium "
                     >
-                      +91 1234568765
+                      +91 7835082074 
                     </a>
                   </li>
                 </ul>
