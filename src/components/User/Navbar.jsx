@@ -34,7 +34,7 @@ function Navbar() {
         <div className="lg:hidden">
           <button
             onClick={toggleMenu}
-            className="navbar-burger ml-10 flex items-center text-blue-600 p-3"
+            className="navbar-burger ml-40 flex items-center text-blue-600 p-3"
           >
             <svg
               className="block h-4 w-4 fill-current"
@@ -89,7 +89,7 @@ function Navbar() {
             href="tel:+917835082074 "
           >
             <MdOutlineLocalPhone className="mt-1" />
-            +91 7835082074 
+            +91 7835082074
           </a>
           {!isLoggedIn ? (
             <Link
@@ -143,7 +143,7 @@ function Navbar() {
           <ul>
             <li className="mb-1">
               <Link
-                className="block p-4 text-sm font-semibold text-gray-400 hover:bg-blue-50 hover:text-blue-600 rounded"
+                className="block p-4 text-sm font-semibold text-emerald-700  rounded"
                 to="/"
               >
                 Home
@@ -151,7 +151,7 @@ function Navbar() {
             </li>
             <li className="mb-1">
               <Link
-                className="block p-4 text-sm font-semibold text-gray-400 hover:bg-blue-50 hover:text-blue-600 rounded"
+                className="block p-4 text-sm font-semibold text-emerald-700 rounded"
                 to="/claims"
               >
                 Claims
@@ -160,7 +160,7 @@ function Navbar() {
 
             <li className="mb-1">
               <Link
-                className="block p-4 text-sm font-semibold text-gray-400 hover:bg-blue-50 hover:text-blue-600 rounded"
+                className="block p-4 text-sm font-semibold text-emerald-700  rounded"
                 to="/track"
               >
                 Track
@@ -179,14 +179,14 @@ function Navbar() {
             <div className="pt-6">
               {!isLoggedIn ? (
                 <Link
-                  className="block px-4 py-3 mb-3 leading-loose text-xs text-center font-semibold bg-gray-50 hover:bg-gray-100 rounded-xl"
+                  className="block px-4 py-3 mb-3 leading-loose text-xl text-white text-center font-semibold bg-emerald-500 hover:bg-gray-100 rounded-xl"
                   to="/login"
                 >
                   Sign In
                 </Link>
               ) : (
                 <button
-                  className="block px-4 py-3 mb-3 leading-loose text-xs text-center font-semibold bg-gray-50 hover:bg-gray-100 rounded-xl"
+                  className="block w-full px-4 py-3 mb-3 leading-loose text-xl text-center font-semibold bg-red-500 text-white hover:bg-gray-100 rounded-xl"
                   onClick={handleLogout}
                 >
                   Log Out

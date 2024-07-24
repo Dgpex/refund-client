@@ -7,7 +7,7 @@ function HomePage() {
   return (
     <div>
       <Banner />
-      <div className="p-10">
+      <div className="lg:p-10 p-5">
         <Banner2 />
       </div>
     </div>

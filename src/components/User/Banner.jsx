@@ -2,7 +2,7 @@ import React from "react";
 import Banner1 from "/Banner1.jpg"; // Ensure this path is correct
 function Banner() {
   return (
-    <div className="relative mb-40 text-center flex items-center justify-center flex-col">
+    <div className="relative lg:mb-40 mb-40 text-center flex items-center justify-center flex-col">
       <div
         className="absolute inset-0 w-full h-screen bg-cover bg-center"
         style={{ backgroundImage: `url(${Banner1})` }}
@@ -12,15 +12,15 @@ function Banner() {
       </div>
 
       {/* Text Content */}
-      <div className="relative z-10 p-4 mt-[5%]">
+      <div className="relative z-10 p-4 lg:mt-[5%] mt-[20%]">
         <h3 className="text-lg font-bold  text-emerald-300 lg:mt-16 mt-4">
           WELCOME TO DARWESH GROUP
         </h3>
        
-        <h2 className="text-4xl font-bold text-white mt-2">
+        <h2 className="text-4xl font-bold text-white lg:mt-2 mt-5">
           "Your Investment is Safe with Us <br /> - Refund Assured"
         </h2>
-        <p className="mt-4 font-semibold text-white">
+        <p className="lg:mt-4 mt-8 font-semibold text-white">
           Our goal is to make the reclaiming process as simple and
           straightforward as possible for you.
           <br /> We aim to provide clear instructions and personalized support,
@@ -38,7 +38,7 @@ function Banner() {
         
         <a
           href="/claims"
-          className="relative inline-flex items-center justify-center mt-4 p-4 px-6 py-3 overflow-hidden font-medium text-emerald-400 transition duration-300 ease-out border-2 border-emerald-400 rounded-full shadow-md group"
+          className="relative inline-flex items-center justify-center lg:mt-4 mt-8 p-4 px-6 py-3 overflow-hidden font-medium text-emerald-400 transition duration-300 ease-out border-2 border-emerald-400 rounded-full shadow-md group"
         >
           <span className="absolute inset-0 flex items-center justify-center w-full h-full text-white duration-300 -translate-x-full bg-emerald-400 group-hover:translate-x-0 ease">
             <svg

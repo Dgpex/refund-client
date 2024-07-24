@@ -39,10 +39,10 @@ function Footer({ showForm }) {
                   <li className="flex items-center gap-1 mt-5">
                     <MdEmail />
                     <a
-                      href="mailto:darweshgroup@gmail.com"
+                      href="mailto:darweshgroup.help@gmail.com"
                       className="flex items-center"
                     >
-                      darweshgroup@gmail.com
+                      darweshgroup.help@gmail.com
                     </a>
                   </li>
                   <li className="flex items-center gap-2 mt-6">
