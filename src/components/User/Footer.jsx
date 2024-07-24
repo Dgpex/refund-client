@@ -3,13 +3,13 @@ import { FaLocationDot } from "react-icons/fa6";
 import { MdEmail, MdOutlineLocalPhone } from "react-icons/md";
 import { CiMail } from "react-icons/ci";
 
-function Footer({showForm}) {
+function Footer({ showForm }) {
   return (
     <div>
       <hr />
       <footer class="relative z-10 lg:p-5 bg-white pb-10 pt-5 lg:pt-[50px]">
         <div class="container mx-auto">
-          <div class="flex flex-wrap lg:gap-20">
+          <div class="flex flex-wrap lg:gap-16">
             <div class="w-full px-4 sm:w-2/3 lg:w-3/12">
               <div class="w-full mb-10 lg:ml-10">
                 <a
@@ -24,7 +24,7 @@ function Footer({showForm}) {
 
                     <a className="font-bold"> RAICHUR </a>
                   </div>
-                  <p class="text-base text-body-color dark:text-dark-6 mb-7">
+                  <p class="text-base text-body-color mb-7">
                     Near Toyota Showroom, OPP : RIMS Gate, Hydarabad Road,
                     Raichur. 584102.
                   </p>
@@ -34,17 +34,15 @@ function Footer({showForm}) {
 
             <div class="w-full sm:w-1/2 lg:w-2/12">
               <div class="w-full mb-10 lg:p-0 p-5">
-                <h4 class="text-lg font-bold mb-4">
-                  Get in touch{" "}
-                </h4>
+                <h4 class="text-lg font-bold mb-4">Get in touch </h4>
                 <ul>
                   <li className="flex items-center gap-2 mt-3">
                     <MdEmail />
                     <a
-                      href="mailto:example@example.com"
+                      href="mailto:darweshgroup@gmail.com"
                       className="flex items-center"
                     >
-                      example@example.com
+                      darweshgroup@gmail.com
                     </a>
                   </li>
                   <li className="flex items-center gap-2 mt-3">
@@ -53,7 +51,7 @@ function Footer({showForm}) {
                       href="tel:+917835082074"
                       className="flex items-center text-sm font-medium "
                     >
-                      +91 7835082074 
+                      +91 7835082074
                     </a>
                   </li>
                 </ul>
@@ -61,14 +59,12 @@ function Footer({showForm}) {
             </div>
             <div class="w-full px-4 sm:w-1/2 lg:w-2/12">
               <div class="w-full mb-10">
-                <h4 class="text-lg font-bold text-dark mb-4">
-                  Quick Links
-                </h4>
+                <h4 class="text-lg font-bold text-dark mb-4">Quick Links</h4>
                 <ul class="space-y-3">
                   <li>
                     <a
                       href="/claims"
-                      class="inline-block text-base leading-loose text-body-color hover:text-primary dark:text-dark-6"
+                      class="inline-block text-base leading-loose text-body-color hover:text-primary "
                     >
                       Claims{" "}
                     </a>
@@ -76,7 +72,7 @@ function Footer({showForm}) {
                   <li>
                     <a
                       href="/track"
-                      class="inline-block text-base leading-loose text-body-color hover:text-primary dark:text-dark-6"
+                      class="inline-block text-base leading-loose text-body-color hover:text-primary "
                     >
                       Track claims
                     </a>
@@ -84,7 +80,7 @@ function Footer({showForm}) {
                   {/* <li>
                     <a
                       href="/contact"
-                      class="inline-block text-base leading-loose text-body-color hover:text-primary dark:text-dark-6"
+                      class="inline-block text-base leading-loose text-body-color hover:text-primary "
                     >
                       Contact Us{" "}
                     </a>
@@ -94,14 +90,12 @@ function Footer({showForm}) {
             </div>
             <div class="w-full px-4 sm:w-1/2 lg:w-2/12">
               <div class="w-full mb-10">
-                <h4 class="text-lg font-bold text-dark dark:text-white mb-4">
-                  Company{" "}
-                </h4>
+                <h4 class="text-lg font-bold text-dark mb-4">Company </h4>
                 <ul class="space-y-3">
                   <li>
                     <a
                       href="/privacy-policy"
-                      class="inline-block text-base leading-loose text-body-color hover:text-primary dark:text-dark-6"
+                      class="inline-block text-base leading-loose text-body-color hover:text-primary "
                     >
                       Privacy Policy{" "}
                     </a>
@@ -109,7 +103,7 @@ function Footer({showForm}) {
                   <li>
                     <a
                       href="/terms"
-                      class="inline-block text-base leading-loose text-body-color hover:text-primary dark:text-dark-6"
+                      class="inline-block text-base leading-loose text-body-color hover:text-primary "
                     >
                       Terms & Conditions{" "}
                     </a>
@@ -117,7 +111,7 @@ function Footer({showForm}) {
                   {/* <li>
                     <a
                       href="#"
-                      class="inline-block text-base leading-loose text-body-color hover:text-primary dark:text-dark-6"
+                      class="inline-block text-base leading-loose text-body-color hover:text-primary "
                     >
                       How To Apply ?
                     </a>
